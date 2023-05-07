@@ -19,7 +19,7 @@ namespace PortfolioReporter.Builders
             using OleDbConnection connection = new OleDbConnection(connectionString);
             connection.Open();
 
-            string sql = "SELECT Account, Group, SubGroup FROM Accounts";
+            string sql = "SELECT Account, Group, SubGroup, IsBenchmark FROM Accounts";
 
             using OleDbCommand command = new OleDbCommand(sql, connection);
             using OleDbDataReader reader = command.ExecuteReader();
@@ -32,6 +32,7 @@ namespace PortfolioReporter.Builders
                     Name = OleDbUtils.GetValue<string>(reader["Account"]),
                     Group = OleDbUtils.GetValue<string>(reader["Group"]),
                     SubGroup = OleDbUtils.GetValue<string>(reader["SubGroup"]),
+                    IsBenchmark = OleDbUtils.GetValue<bool>(reader["IsBenchmark"]),
                 };
 
 

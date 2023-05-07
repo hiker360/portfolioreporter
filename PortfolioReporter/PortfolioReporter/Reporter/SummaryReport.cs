@@ -58,11 +58,12 @@ namespace PortfolioReporter.Reporter
             sb += BuildPeriodReturnTableRow("Core");
             sb += BuildPeriodReturnTableRow("Core", "Logical Invest");
             sb += BuildPeriodReturnTableRow("Core", "Real Estate");
-            sb += BuildPeriodReturnTableRow("Core", "TB 401(k)-2");
+            //sb += BuildAccountPeriodReturnTableRow("TB 401(k)-2", true);
             sb += BuildPeriodReturnTableRow("Core", "Crypto Wallet");
             sb += BuildPeriodReturnTableRow("Opportunity");
             sb += BuildPeriodReturnTableRow("Gold");
-            //sb += BuildPeriodReturnTableRow("Portfolio");
+            sb += BuildPortfolioPeriodReturnTableRow();
+
             //sb += BuildPeriodReturnTableRow("SPY");
             sb += HtmlUtils.EndTable();
             sb += "</p>";
@@ -83,6 +84,82 @@ namespace PortfolioReporter.Reporter
             msg += "</tr>";
             return msg;
         }
+
+        private String BuildPortfolioPeriodReturnTableRow()
+        {
+            var msg = "<tr>";
+            msg += HtmlUtils.BuildTableCell("Portfolio");
+
+            double periodRtn;
+
+            // YTD
+            periodRtn = _portfolio.ReturnsPctYTD();
+            msg += HtmlUtils.BuildNumberCell(periodRtn.FormatPercentage());
+
+            // MTD
+            periodRtn = _portfolio.ReturnsPctMTD();
+            msg += HtmlUtils.BuildNumberCell(periodRtn.FormatPercentage());
+
+            // 1 Year
+            periodRtn = _portfolio.ReturnsPct1Year();
+            msg += HtmlUtils.BuildNumberCell(periodRtn.FormatPercentage());
+
+            // 6 Months
+            periodRtn = _portfolio.ReturnsPct6Month();
+            msg += HtmlUtils.BuildNumberCell(periodRtn.FormatPercentage());
+
+            // 3 Months
+            periodRtn = _portfolio.ReturnsPct3Month();
+            msg += HtmlUtils.BuildNumberCell(periodRtn.FormatPercentage());
+
+            // 1 Month
+            periodRtn = _portfolio.ReturnsPct1Month();
+            msg += HtmlUtils.BuildNumberCell(periodRtn.FormatPercentage());
+
+            msg += "</tr>";
+            return msg;
+        }
+
+        private String BuildAccountPeriodReturnTableRow(string acctName, bool indent)
+        {
+            var acct = _portfolio.GetAccount(acctName);
+
+            var msg = "<tr>";
+            if (indent)
+                msg += HtmlUtils.BuildTableCell($"&nbsp;&nbsp;&nbsp;{acctName}");
+            else
+                msg += HtmlUtils.BuildTableCell(acctName);
+
+            double periodRtn;
+
+            // YTD
+            periodRtn = acct.ReturnsPctYTD;
+            msg += HtmlUtils.BuildNumberCell(periodRtn.FormatPercentage());
+
+            // MTD
+            periodRtn = acct.ReturnsPctMTD;
+            msg += HtmlUtils.BuildNumberCell(periodRtn.FormatPercentage());
+
+            // 1 Year
+            periodRtn = acct.ReturnsPct1Year;
+            msg += HtmlUtils.BuildNumberCell(periodRtn.FormatPercentage());
+
+            // 6 Months
+            periodRtn = acct.ReturnsPct6Month;
+            msg += HtmlUtils.BuildNumberCell(periodRtn.FormatPercentage());
+
+            // 3 Months
+            periodRtn = acct.ReturnsPct3Month;
+            msg += HtmlUtils.BuildNumberCell(periodRtn.FormatPercentage());
+
+            // 1 Month
+            periodRtn = acct.ReturnsPct1Month;
+            msg += HtmlUtils.BuildNumberCell(periodRtn.FormatPercentage());
+
+            msg += "</tr>";
+            return msg;
+        }
+
 
         private String BuildPeriodReturnTableRow(string groupName)
         {

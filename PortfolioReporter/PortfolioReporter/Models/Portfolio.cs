@@ -9,12 +9,47 @@ namespace PortfolioReporter.Models
 {
     internal class Portfolio
     {
-        private Dictionary<string, Account> _accounts = new();
+        private readonly Dictionary<string, Account> _accounts = new();
 
-        public List<Account> Accounts => _accounts.Values.ToList();
+        public List<Account> Accounts {
+            get
+            {
+                var list = new List<Account>();
+                foreach (var acct in _accounts.Values)
+                {
+                    if (acct.IsBenchmark)
+                        continue;
+
+                    list.Add(acct);
+                }
+                return list;
+            }
+
+        }
+
+        public List<Account> Benchmarks
+        {
+            get
+            {
+                var list = new List<Account>();
+                foreach (var acct in _accounts.Values)
+                {
+                    if (!acct.IsBenchmark)
+                        continue;
+
+                    list.Add(acct);
+                }
+                return list;
+            }
+
+        }
+
 
         public Account GetAccount(string name)
         {
+            if (!_accounts.ContainsKey(name))
+                throw new Exception($"Account {name} does not exist");
+
             return _accounts[name];
 
         }
@@ -27,7 +62,7 @@ namespace PortfolioReporter.Models
         public List<Account> GetAccountsForGroup(string group)
         {
             var list = new List<Account>();
-            foreach (var acct in _accounts.Values)
+            foreach (var acct in Accounts)
             {
                 if (acct.Group == group)
                     list.Add(acct);
@@ -38,7 +73,7 @@ namespace PortfolioReporter.Models
         public List<Account> GetAccountsForGroup(string group, string subGroup)
         {
             var list = new List<Account>();
-            foreach (var acct in _accounts.Values)
+            foreach (var acct in Accounts)
             {
                 if (acct.Group == group && acct.SubGroup == subGroup)
                     list.Add(acct);
@@ -51,14 +86,29 @@ namespace PortfolioReporter.Models
             get
             {
                 var marketValue = 0m;
-                var list = new List<Account>();
-                foreach (var acct in _accounts.Values)
+                foreach (var acct in Accounts)
                 {
                     marketValue += acct.MarketValue;
                 }
                 return marketValue;
 
             }
+        }
+
+        public double GetReturnsPercent(DateTime fromDateTime)
+        {
+            var costBasis = 0m;
+            var marketValue = 0m;
+
+            foreach (var acct in Accounts)
+            {
+                costBasis += acct.GetCostBasis(fromDateTime);
+                marketValue += acct.MarketValue;
+            }
+
+            var rtnPct = CalcUtils.CalcReturnPercent(costBasis, marketValue);
+            return (double)rtnPct;
+
         }
 
         public double GetReturnsPercentForGroup (String group, DateTime fromDateTime)
@@ -95,7 +145,35 @@ namespace PortfolioReporter.Models
 
         }
 
+        // Get returns for portfolio
+        public double ReturnsPctYTD()
+        {
+            return GetReturnsPercent(new DateTime(DateTime.Today.Year, 1, 1));
+        }
 
+        public double ReturnsPctMTD()
+        {
+            return GetReturnsPercent(new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1));
+        }
+        public double ReturnsPct1Year()
+        {
+            return GetReturnsPercent(DateTime.Today.AddYears(-1));
+        }
+        public double ReturnsPct6Month()
+        {
+            return GetReturnsPercent(DateTime.Today.AddMonths(-6));
+        }
+        public double ReturnsPct3Month()
+        {
+            return GetReturnsPercent(DateTime.Today.AddMonths(-3));
+        }
+        public double ReturnsPct1Month()
+        {
+            return GetReturnsPercent(DateTime.Today.AddMonths(-1));
+        }
+
+
+        // Get returns for group
         public double ReturnsPctYTD(string group)
         {
             return GetReturnsPercentForGroup(group, new DateTime(DateTime.Today.Year, 1, 1));

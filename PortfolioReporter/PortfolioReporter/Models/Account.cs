@@ -15,6 +15,8 @@ namespace PortfolioReporter.Models
         public string SubGroup { get; set; } = "";
         public decimal MarketValue => PeriodBalances.Last().MarketValue;
 
+        public bool IsBenchmark { get; set; }
+
         public DateTime AsOfDate => PeriodBalances.Last().PeriodEndingDate;
 
         public List<PeriodBalance> PeriodBalances { get; private set; } = new ();
