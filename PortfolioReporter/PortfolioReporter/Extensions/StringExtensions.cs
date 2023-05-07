@@ -25,7 +25,7 @@ namespace PortfolioReporter.Extensions
 
         public static String FormatPercentage(this double value)
         {
-            return string.Format("{0:0.00}%", value);
+            return string.Format("{0:0.00}%", value*100);
         }
 
         public static String FormatCurrency(this double value)

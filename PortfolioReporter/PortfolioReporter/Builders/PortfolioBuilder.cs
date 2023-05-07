@@ -21,7 +21,7 @@ namespace PortfolioReporter.Builders
                 var accountBuilder = new AccountBuilder();
                 accountBuilder.Build(account);
 
-                portfolio.Accounts.Add(account.Name, account);
+                portfolio.AddAccount(account);
             }
 
             return portfolio;

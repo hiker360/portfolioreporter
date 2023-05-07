@@ -7,8 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data;
 using PortfolioReporter.Models;
-using PortfolioReporter.Utils;
 using System.Data.SqlTypes;
+using System.Text.RegularExpressions;
 
 namespace PortfolioReporter.Builders
 {
@@ -19,7 +19,7 @@ namespace PortfolioReporter.Builders
             using OleDbConnection connection = new OleDbConnection(connectionString);
             connection.Open();
 
-            string sql = "SELECT Account, Group, SubGroup, LatestBalance FROM vAccounts";
+            string sql = "SELECT Account, Group, SubGroup FROM Accounts";
 
             using OleDbCommand command = new OleDbCommand(sql, connection);
             using OleDbDataReader reader = command.ExecuteReader();
@@ -32,8 +32,9 @@ namespace PortfolioReporter.Builders
                     Name = OleDbUtils.GetValue<string>(reader["Account"]),
                     Group = OleDbUtils.GetValue<string>(reader["Group"]),
                     SubGroup = OleDbUtils.GetValue<string>(reader["SubGroup"]),
-                    LatestBalance = (decimal) OleDbUtils.GetValue<decimal>(reader["LatestBalance"]),
                 };
+
+
                 accounts.Add(acct);
             }
 
@@ -46,7 +47,7 @@ namespace PortfolioReporter.Builders
             using OleDbConnection connection = new OleDbConnection(connectionString);
             connection.Open();
 
-            string sql = "SELECT Account, PeriodEnding, AccountBalance, PeriodInvestment FROM Balances where Account=@account Order by PeriodEnding";
+            string sql = "SELECT Account, PeriodEnding, MarketValue, PeriodInvestment FROM Balances where Account=@account Order by PeriodEnding";
 
             using OleDbCommand command = new OleDbCommand(sql, connection);
             OleDbUtils.AddParameterValue(command, "account", System.Data.SqlDbType.Text, accountName);
@@ -59,7 +60,7 @@ namespace PortfolioReporter.Builders
                 var balance = new PeriodBalance()
                 {
                     AccountName = OleDbUtils.GetValue<string>(reader["Account"]),
-                    AccountBalance= OleDbUtils.GetValue<decimal>(reader["AccountBalance"]),
+                    MarketValue = OleDbUtils.GetValue<decimal>(reader["MarketValue"]),
                     PeriodEndingDate = OleDbUtils.GetValue<DateTime>(reader["PeriodEnding"]),
                     Investment = OleDbUtils.GetValue<decimal>(reader["PeriodInvestment"]),
                 };

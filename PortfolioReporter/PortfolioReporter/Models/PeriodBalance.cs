@@ -11,12 +11,12 @@ namespace PortfolioReporter.Models
     {
         public string AccountName { get; set; } = "";
         public DateTime PeriodEndingDate { get; set; }
-        public decimal AccountBalance { get; set; } = 0m;
+        public decimal MarketValue { get; set; } = 0m;
         public decimal Investment { get; set; } = 0m;
 
         public override string ToString()
         {
-            return $"[PeriodBalance] Date={PeriodEndingDate.FormatDate()}; AccountBalance={AccountBalance.FormatCurrency()}; Investment={Investment.FormatCurrency()}";
+            return $"[PeriodBalance] Date={PeriodEndingDate.FormatDate()}; AccountBalance={MarketValue.FormatCurrency()}; Investment={Investment.FormatCurrency()}";
         }
     }
 }
