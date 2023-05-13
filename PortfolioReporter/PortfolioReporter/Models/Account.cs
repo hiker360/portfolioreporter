@@ -13,8 +13,18 @@ namespace PortfolioReporter.Models
         public string Name { get; set; } = "";
         public string Group { get; set; } = "";
         public string SubGroup { get; set; } = "";
-        public decimal MarketValue => PeriodBalances.Last().MarketValue;
+        public decimal MarketValue
+        {
+            get
+            {
+                if (!HasBalances)
+                    return 0;
+                else
+                    return PeriodBalances.Last().MarketValue;
+            }
+        }
 
+        public bool HasBalances => PeriodBalances.Count > 0;
         public bool IsBenchmark { get; set; }
 
         public DateTime AsOfDate => PeriodBalances.Last().PeriodEndingDate;
@@ -28,6 +38,9 @@ namespace PortfolioReporter.Models
 
         public decimal GetReturnsAmount(DateTime fromDate)
         {
+            if (!HasBalances)
+                return 0;
+
             var costBasis = GetCostBasis(fromDate);
             var amt = CalcUtils.CalcReturnAmount(costBasis, MarketValue);
             return amt;
@@ -35,6 +48,9 @@ namespace PortfolioReporter.Models
 
         public double GetReturnsPercent(DateTime fromDate)
         {
+            if (!HasBalances)
+                return 0;
+
             var costBasis = GetCostBasis(fromDate);
             var rtnPct = CalcUtils.CalcReturnPercent(costBasis, MarketValue);
             return (double) rtnPct;
@@ -42,6 +58,9 @@ namespace PortfolioReporter.Models
 
         public decimal GetCostBasis(DateTime fromDateTime)
         {
+            if (!HasBalances)
+                return 0;
+
             var idx = GetNearestPeriodBalanceIndex(fromDateTime);
             var startPerBal = PeriodBalances[idx];
 

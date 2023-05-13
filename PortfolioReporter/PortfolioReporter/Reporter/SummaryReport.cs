@@ -58,13 +58,18 @@ namespace PortfolioReporter.Reporter
             sb += BuildPeriodReturnTableRow("Core");
             sb += BuildPeriodReturnTableRow("Core", "Logical Invest");
             sb += BuildPeriodReturnTableRow("Core", "Real Estate");
-            //sb += BuildAccountPeriodReturnTableRow("TB 401(k)-2", true);
-            sb += BuildPeriodReturnTableRow("Core", "Crypto Wallet");
+            sb += BuildPeriodReturnTableRow("Core", "Crypto");
+            sb += BuildPeriodReturnTableRow("Core", "401k");
             sb += BuildPeriodReturnTableRow("Opportunity");
             sb += BuildPeriodReturnTableRow("Gold");
+            sb += BuildPeriodReturnTableRow("Cash");
+            sb += BuildPeriodReturnTableRow("Cash", "Money Market");
+            sb += BuildPeriodReturnTableRow("Cash", "Cash");
+            sb += BuildPeriodReturnTableRow("Cash", "Bank");
             sb += BuildPortfolioPeriodReturnTableRow();
 
-            //sb += BuildPeriodReturnTableRow("SPY");
+            sb += BuildPeriodReturnTableRow("Markets");
+            sb += BuildPeriodReturnTableRow("Markets", "S&P");
             sb += HtmlUtils.EndTable();
             sb += "</p>";
 

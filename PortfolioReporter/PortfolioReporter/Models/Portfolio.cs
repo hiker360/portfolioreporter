@@ -62,7 +62,7 @@ namespace PortfolioReporter.Models
         public List<Account> GetAccountsForGroup(string group)
         {
             var list = new List<Account>();
-            foreach (var acct in Accounts)
+            foreach (var acct in _accounts.Values)
             {
                 if (acct.Group == group)
                     list.Add(acct);
@@ -73,7 +73,7 @@ namespace PortfolioReporter.Models
         public List<Account> GetAccountsForGroup(string group, string subGroup)
         {
             var list = new List<Account>();
-            foreach (var acct in Accounts)
+            foreach (var acct in _accounts.Values)
             {
                 if (acct.Group == group && acct.SubGroup == subGroup)
                     list.Add(acct);

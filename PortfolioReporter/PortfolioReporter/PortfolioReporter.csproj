@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="log4net" Version="2.0.15" />
     <PackageReference Include="System.Data.OleDb" Version="7.0.0" />
   </ItemGroup>
 
