@@ -12,4 +12,10 @@
     <PackageReference Include="System.Data.OleDb" Version="7.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="app.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
