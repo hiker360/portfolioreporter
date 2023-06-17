@@ -145,6 +145,8 @@ namespace PortfolioReporter.Models
 
         }
 
+        public bool HasAccount(string acctName) => _accounts.ContainsKey(acctName);
+
         // Get returns for portfolio
         public double ReturnsPctYTD()
         {

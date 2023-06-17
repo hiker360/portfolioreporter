@@ -70,5 +70,16 @@ namespace PortfolioReporter.Extensions
             return str;
         }
 
+        public static decimal ParseMoneyToDecimal(this string input)
+        {
+            // Remove currency symbol and thousands separator
+            input = input.Replace("$", "").Replace(",", "");
+
+            if (!decimal.TryParse(input, out decimal result))
+                throw new Exception($"Unable to parse '{input}' to a decimal.");
+
+            return result;
+        }
+
     }
 }

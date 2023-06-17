@@ -10,13 +10,16 @@ using log4net.Config;
 using log4net;
 using System.Reflection;
 using PortfolioReporter.Utils;
+using PortfolioReporter.Importer;
 
 namespace PortfolioReporter
 {
     class Program
     {
         private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        
+        private const string DOWNLOAD_PATH= @"C:\Users\Todd\Downloads";
+        private const bool SendEmail = true;
+
         static void Main(string[] args)
         {
             XmlConfigurator.Configure(new System.IO.FileInfo("log4net.config"));
@@ -30,18 +33,14 @@ namespace PortfolioReporter
             var portfolioBuilder = new PortfolioBuilder();
             var portfolio = portfolioBuilder.Build();
 
-            //var acct = portfolio.GetAccount("Fundrise - TB IRA");
-            //Console.WriteLine(acct.ReturnsPctYTD.FormatPercentage());
-            //Console.WriteLine(acct.ReturnsPctMTD.FormatPercentage());
-            //Console.WriteLine(acct.ReturnsPct1Year.FormatPercentage());
-            //Console.WriteLine(acct.ReturnsPct6Month.FormatPercentage());
-            //Console.WriteLine(acct.ReturnsPct3Month.FormatPercentage());
-            //Console.WriteLine(acct.ReturnsPct1Month.FormatPercentage());
+            var acctImporter = new MintAssetsImporter();
+            //acctImporter.Import(portfolio, $"{DOWNLOAD_PATH}\\trends.csv");
 
             var rpt = new SummaryReport(portfolio);
             var html = rpt.GetHtml();
 
-            EmailUtils.SendMail("Portfolio Reporter Summary",html);
+            if (SendEmail)
+                EmailUtils.SendMail("Portfolio Reporter Summary",html);
         }
     }
 }

@@ -6,10 +6,11 @@ using System.Text;
 using System.Threading.Tasks;
 using PortfolioReporter.Utils;
 using PortfolioReporter.Extensions;
+using System.Collections;
 
 namespace PortfolioReporter.Reporter
 {
-    internal class SummaryReport
+    internal class SummaryReport : IComparer<Account>
     {
         private Portfolio _portfolio;
         public SummaryReport(Portfolio portfolio)
@@ -28,21 +29,41 @@ namespace PortfolioReporter.Reporter
             return sb;
         }
 
-
+        public int Compare(Account x, Account y)
+        {
+            if (x == null && y == null)
+            {
+                return 0;
+            }
+            else if (x == null)
+            {
+                return -1;
+            }
+            else if (y == null)
+            {
+                return 1;
+            }
+            else
+            {
+                return string.Compare(x.Name, y.Name, StringComparison.OrdinalIgnoreCase);
+            }
+        }
         private string BuildAccountBalances()
         {
             var sb = "<h2>Account Balances</h2>";
 
             sb += StartAccountBalancesTable();
             var accounts = _portfolio.Accounts;
+            accounts.Sort(this);
+
             foreach (var account in accounts)
             {
                 //if (!account.IsActive) continue;
                 //if (account.IsBenchmark) continue;
 
-                sb += BuildAccountBalanceTableRow(account.Name, account.MarketValue);
+                sb += BuildAccountBalanceTableRow(account.Name, account.Group, account.SubGroup, account.MarketValue);
             }
-            sb += BuildAccountBalanceTableRow("<b>Total Balance</b>", _portfolio.MarketValue);
+            sb += BuildAccountBalanceTableRow("<b>Total Balance</b>", "","", _portfolio.MarketValue);
             sb += HtmlUtils.EndTable();
             sb += "</p>";
 
@@ -76,7 +97,7 @@ namespace PortfolioReporter.Reporter
             return sb;
 
         }
-        private String BuildAccountBalanceTableRow(string accountName, decimal balance)
+        private String BuildAccountBalanceTableRow(string accountName, string group, string subgroup, decimal balance)
         {
 
             var msg = "<tr>";
@@ -84,6 +105,8 @@ namespace PortfolioReporter.Reporter
             var balFormatted = balance.FormatCurrency();
 
             msg += HtmlUtils.BuildTableCell(accountName);
+            msg += HtmlUtils.BuildTableCell(group);
+            msg += HtmlUtils.BuildTableCell(subgroup);
             msg += HtmlUtils.BuildNumberCell(balFormatted);
 
             msg += "</tr>";
@@ -242,6 +265,8 @@ namespace PortfolioReporter.Reporter
             var msg = "<table>";
             msg += "<tr>";
             msg += HtmlUtils.BuildTableHeader("Account");
+            msg += HtmlUtils.BuildTableHeader("Group");
+            msg += HtmlUtils.BuildTableHeader("Subgroup");
             msg += HtmlUtils.BuildTableHeader("Balance");
             msg += "</tr>";
 

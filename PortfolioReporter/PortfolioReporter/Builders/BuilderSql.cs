@@ -12,7 +12,7 @@ using System.Text.RegularExpressions;
 
 namespace PortfolioReporter.Builders
 {
-    internal class BuilderSql :Sql 
+    internal class ImporterSql :Sql 
     {
         public static IList<Account> GetAccounts()
         {

@@ -15,7 +15,7 @@ namespace PortfolioReporter.Builders
 
             var portfolio = new Portfolio();
 
-            var accounts = BuilderSql.GetAccounts();
+            var accounts = ImporterSql.GetAccounts();
             foreach (var account in accounts)
             {
                 var accountBuilder = new AccountBuilder();

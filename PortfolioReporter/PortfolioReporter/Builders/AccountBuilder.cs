@@ -11,7 +11,7 @@ namespace PortfolioReporter.Builders
     {
         public void Build(Account account)
         {
-            var periodBalances = BuilderSql.GetPeriodBalances(account.Name);
+            var periodBalances = ImporterSql.GetPeriodBalances(account.Name);
             foreach (var bal in periodBalances)
             {
                 account.PeriodBalances.Add(bal);
