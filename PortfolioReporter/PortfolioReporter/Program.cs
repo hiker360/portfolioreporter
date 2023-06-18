@@ -11,6 +11,7 @@ using log4net;
 using System.Reflection;
 using PortfolioReporter.Utils;
 using PortfolioReporter.Importer;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace PortfolioReporter
 {
@@ -18,6 +19,7 @@ namespace PortfolioReporter
     {
         private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private const string DOWNLOAD_PATH= @"C:\Users\Todd\Downloads";
+        private const string OUT_REPORT_FILENAME= @"C:\Users\Todd\SynologyDrive\PortfolioReporter\out\PortfolioReporter.html";
         private const bool SendEmail = true;
 
         static void Main(string[] args)
@@ -39,8 +41,9 @@ namespace PortfolioReporter
             var rpt = new SummaryReport(portfolio);
             var html = rpt.GetHtml();
 
-            if (SendEmail)
-                EmailUtils.SendMail("Portfolio Reporter Summary",html);
+            //if (SendEmail)
+            //    EmailUtils.SendMail("Portfolio Reporter Summary",html);
+            File.WriteAllText(OUT_REPORT_FILENAME, html);
         }
     }
 }
