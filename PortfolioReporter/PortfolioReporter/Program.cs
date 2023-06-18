@@ -1,6 +1,6 @@
 ﻿using PortfolioReporter;
 using System;
-using System.Data.OleDb;
+using MySql.Data.MySqlClient;
 using System.Data.SqlClient;
 using PortfolioReporter.Builders;
 using PortfolioReporter.Models;
@@ -34,7 +34,7 @@ namespace PortfolioReporter
             var portfolio = portfolioBuilder.Build();
 
             var acctImporter = new MintAssetsImporter();
-            //acctImporter.Import(portfolio, $"{DOWNLOAD_PATH}\\trends.csv");
+            acctImporter.Import(portfolio, $"{DOWNLOAD_PATH}\\trends.csv");
 
             var rpt = new SummaryReport(portfolio);
             var html = rpt.GetHtml();

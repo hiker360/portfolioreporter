@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.OleDb;
+using MySql.Data.MySqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,8 +10,7 @@ namespace PortfolioReporter
 {
     internal class Sql
     {
-        internal const string dbPath = @"C:\Users\Todd\SynologyDrive\PortfolioReporter\PortfolioReporter.accdb";
-        internal  const string connectionString = $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={dbPath};";
+        internal  const string connectionString = $"Server=ds214;Database=PortfolioReporter;Port=3306;Uid=admin;Pwd=Spring!2023;";
 
     }
 }

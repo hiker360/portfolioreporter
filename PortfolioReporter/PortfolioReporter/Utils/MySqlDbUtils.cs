@@ -4,47 +4,47 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Data.OleDb;
+using MySql.Data.MySqlClient;
 
 namespace PortfolioReporter.Utils
 {
-    internal static class OleDbUtils
+    internal static class MySqlDbUtils
     {
 
-        public static T ExecuteSingleton<T>(OleDbConnection conn, String sql, String fieldName, T defaultValue)
+        public static T ExecuteSingleton<T>(MySqlConnection conn, String sql, String fieldName, T defaultValue)
         {
             T fieldValue = defaultValue;
-            using OleDbCommand cmd = new OleDbCommand(sql, conn);
-            using OleDbDataReader reader = cmd.ExecuteReader();
+            using MySqlCommand  cmd = new MySqlCommand (sql, conn);
+            using MySqlDataReader  reader = cmd.ExecuteReader();
             if (reader.Read())
             {
-                fieldValue = OleDbUtils.GetValue<T>(reader[fieldName]);
+                fieldValue = MySqlDbUtils.GetValue<T>(reader[fieldName]);
             }
 
 
             return fieldValue;
         }
 
-        public static void ExecuteNonQuery(OleDbConnection conn, String sql)
+        public static void ExecuteNonQuery(MySqlConnection conn, String sql)
         {
-            using OleDbCommand cmd = new OleDbCommand(sql, conn);
+            using MySqlCommand  cmd = new MySqlCommand (sql, conn);
             cmd.ExecuteNonQuery();
         }
 
 
-        public static T ExecuteSingleton<T>(OleDbCommand cmd, String fieldName, T defaultValue)
+        public static T ExecuteSingleton<T>(MySqlCommand  cmd, String fieldName, T defaultValue)
         {
             T fieldValue = defaultValue;
             using var reader = cmd.ExecuteReader();
             if (reader.Read())
             {
-                fieldValue = OleDbUtils.GetValue<T>(reader[fieldName]);
+                fieldValue = MySqlDbUtils.GetValue<T>(reader[fieldName]);
             }
 
             return fieldValue;
         }
 
-        public static bool Exists(OleDbConnection conn, OleDbCommand cmd)
+        public static bool Exists(MySqlConnection conn, MySqlCommand  cmd)
         {
             bool exists = false;
             using (var reader = cmd.ExecuteReader())
@@ -59,7 +59,7 @@ namespace PortfolioReporter.Utils
 
 
 
-        public static T ExecuteSingleton<T>(OleDbCommand cmd, String fieldName)
+        public static T ExecuteSingleton<T>(MySqlCommand  cmd, String fieldName)
         {
             T fieldValue = ExecuteSingleton(cmd, fieldName, default(T));
             return fieldValue;
@@ -84,14 +84,14 @@ namespace PortfolioReporter.Utils
             return (T)defaultValue;
         }
 
-        public static void AddParameterValue<T>(OleDbCommand cmd, String parameterName, SqlDbType paramType, T value)
-        {
-            cmd.Parameters.Add(parameterName, paramType).Value = (T)value;
-        }
+        //public static void AddParameterValue<T>(MySqlCommand  cmd, String parameterName, SqlDbType paramType, T value)
+        //{
+        //    cmd.Parameters.Add(parameterName, paramType).Value = (T)value;
+        //}
 
-        public static void ResetTableSeed(OleDbConnection conn, String tableName)
+        public static void ResetTableSeed(MySqlConnection conn, String tableName)
         {
-            using var cmd = new OleDbCommand("DBCC CHECKIDENT('[" + tableName + "]', RESEED, 0);", conn);
+            using var cmd = new MySqlCommand ("DBCC CHECKIDENT('[" + tableName + "]', RESEED, 0);", conn);
             cmd.ExecuteNonQuery();
         }
 

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.VisualBasic.FileIO;
 using PortfolioReporter.Extensions;
 using PortfolioReporter.Models;
+using static log4net.Appender.RollingFileAppender;
 
 namespace PortfolioReporter.Importer
 {
@@ -13,13 +14,16 @@ namespace PortfolioReporter.Importer
     {
         public void Import(Portfolio portfolio, String mintTrendsFile)
         {
+            FileInfo fileInfo = new FileInfo(mintTrendsFile);
+            DateOnly periodEnding = DateOnly.FromDateTime(fileInfo.CreationTime.Date); ;
+
             TextFieldParser parser = new TextFieldParser(mintTrendsFile) ?? throw new NullReferenceException();
 
             parser.Delimiters = new string[] { "," };
             parser.HasFieldsEnclosedInQuotes = true;
             bool foundStart = false;
 
-            ImporterSql.DeleteBalances();
+            //ImporterSql.DeleteBalances();
             while (true)
             {
                 string[] parts = parser.ReadFields() ?? throw new NullReferenceException();
@@ -44,7 +48,8 @@ namespace PortfolioReporter.Importer
                 if (!portfolio.HasAccount(accountName))
                     continue;
 
-                ImporterSql.UpdateAccountBalance(accountName, marketValue);
+
+                ImporterSql.UpdateAccountBalance(accountName, periodEnding, marketValue);
 
             }
         }
