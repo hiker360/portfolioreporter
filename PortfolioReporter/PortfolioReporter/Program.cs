@@ -19,7 +19,7 @@ namespace PortfolioReporter
     {
         private static readonly ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private const string DOWNLOAD_PATH= @"C:\Users\Todd\Downloads";
-        private const string OUT_REPORT_FILENAME= @"C:\Users\Todd\SynologyDrive\PortfolioReporter\out\PortfolioReporter.html";
+        private const string OUT_REPORT_FILENAME= @"\\DS214\public\PortfolioReporter.html";
         private const bool SendEmail = true;
 
         static void Main(string[] args)

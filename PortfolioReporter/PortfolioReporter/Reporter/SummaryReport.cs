@@ -21,6 +21,7 @@ namespace PortfolioReporter.Reporter
         public string GetHtml()
         {
             var sb = HtmlUtils.BuildReportHeader("Portfolio Summary");
+            sb += "<div>Report run on " + DateTime.Today.ToShortDateString() + "</div>";
 
             sb += BuildPeriodReturns();
             sb += BuildAccountBalances();
