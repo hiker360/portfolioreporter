@@ -111,6 +111,67 @@ namespace PortfolioReporter.Models
 
         }
 
+        public double GetAAR()
+        {
+            var periodBegin = new DateTime(DateTime.Today.Year, 1, 1);
+            var costBasis = 0m;
+            var marketValue = 0m;
+
+            foreach (var acct in Accounts)
+            {
+                costBasis += acct.GetCostBasis(periodBegin);
+                marketValue += acct.MarketValue;
+            }
+
+            var periodEnd = DateTime.Today;
+
+            var aar = CalcUtils.AnnualizeReturns(periodBegin, periodEnd, costBasis, marketValue);
+            return aar;
+
+        }
+
+        public double GetAARForGroup(String group)
+        {
+            var periodBegin = new DateTime(DateTime.Today.Year, 1, 1);
+            var accts = GetAccountsForGroup(group);
+            var costBasis = 0m;
+            var marketValue = 0m;
+
+            foreach (var acct in accts)
+            {
+                costBasis += acct.GetCostBasis(periodBegin);
+                marketValue += acct.MarketValue;
+            }
+
+            var periodEnd = DateTime.Today;
+
+            var aar = CalcUtils.AnnualizeReturns(periodBegin, periodEnd, costBasis, marketValue);
+            return aar;
+
+        }
+
+        public double GetAARForGroupSubGroup(String group, String subGroup)
+        {
+            var periodBegin = new DateTime(DateTime.Today.Year, 1, 1);
+
+            var accts = GetAccountsForGroup(group, subGroup);
+            var costBasis = 0m;
+            var marketValue = 0m;
+
+            foreach (var acct in accts)
+            {
+                costBasis += acct.GetCostBasis(periodBegin);
+                marketValue += acct.MarketValue;
+            }
+
+            var periodEnd = DateTime.Today;
+
+            var aar = CalcUtils.AnnualizeReturns(periodBegin, periodEnd, costBasis, marketValue);
+            return aar;
+
+        }
+
+
         public double GetReturnsPercentForGroup (String group, DateTime fromDateTime)
         {
             var accts = GetAccountsForGroup(group);

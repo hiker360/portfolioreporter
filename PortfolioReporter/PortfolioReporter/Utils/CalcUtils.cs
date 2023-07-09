@@ -36,13 +36,13 @@ namespace PortfolioReporter.Utils
             return sd;
         }
 
-        public static double AnnualizeReturns(DateTime periodStartDate, DateTime periodEndDate, double startingCapital, double endingCapital)
+        public static double AnnualizeReturns(DateTime periodStartDate, DateTime periodEndDate, decimal startingCapital, decimal endingCapital)
         {
             //https://www.asecurelife.com/annualized-return-formula/
             //https://www.calculator.net/roi-calculator.html
             double days = (periodEndDate - periodStartDate).TotalDays;
             var years = Math.Round(days / 365, 2);
-            var roi = (endingCapital / startingCapital) - 1;
+            var roi = (double) (endingCapital / startingCapital) - 1;
             double apr = Math.Pow((1 + roi), (1 / years)) - 1.0d;
             return apr;
 

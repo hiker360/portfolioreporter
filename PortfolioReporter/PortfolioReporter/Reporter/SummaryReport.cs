@@ -30,7 +30,7 @@ namespace PortfolioReporter.Reporter
             return sb;
         }
 
-        public int Compare(Account x, Account y)
+        public int Compare(Account? x, Account? y)
         {
             if (x == null && y == null)
             {
@@ -145,49 +145,53 @@ namespace PortfolioReporter.Reporter
             periodRtn = _portfolio.ReturnsPct1Month();
             msg += HtmlUtils.BuildNumberCell(periodRtn.FormatPercentage());
 
-            msg += "</tr>";
-            return msg;
-        }
-
-        private String BuildAccountPeriodReturnTableRow(string acctName, bool indent)
-        {
-            var acct = _portfolio.GetAccount(acctName);
-
-            var msg = "<tr>";
-            if (indent)
-                msg += HtmlUtils.BuildTableCell($"&nbsp;&nbsp;&nbsp;{acctName}");
-            else
-                msg += HtmlUtils.BuildTableCell(acctName);
-
-            double periodRtn;
-
-            // YTD
-            periodRtn = acct.ReturnsPctYTD;
-            msg += HtmlUtils.BuildNumberCell(periodRtn.FormatPercentage());
-
-            // MTD
-            periodRtn = acct.ReturnsPctMTD;
-            msg += HtmlUtils.BuildNumberCell(periodRtn.FormatPercentage());
-
-            // 1 Year
-            periodRtn = acct.ReturnsPct1Year;
-            msg += HtmlUtils.BuildNumberCell(periodRtn.FormatPercentage());
-
-            // 6 Months
-            periodRtn = acct.ReturnsPct6Month;
-            msg += HtmlUtils.BuildNumberCell(periodRtn.FormatPercentage());
-
-            // 3 Months
-            periodRtn = acct.ReturnsPct3Month;
-            msg += HtmlUtils.BuildNumberCell(periodRtn.FormatPercentage());
-
-            // 1 Month
-            periodRtn = acct.ReturnsPct1Month;
-            msg += HtmlUtils.BuildNumberCell(periodRtn.FormatPercentage());
+            // AAR
+            var aar = _portfolio.GetAAR();
+            msg += HtmlUtils.BuildNumberCell(aar.FormatPercentage());
 
             msg += "</tr>";
             return msg;
         }
+
+        //private String BuildAccountPeriodReturnTableRow(string acctName, bool indent)
+        //{
+        //    var acct = _portfolio.GetAccount(acctName);
+
+        //    var msg = "<tr>";
+        //    if (indent)
+        //        msg += HtmlUtils.BuildTableCell($"&nbsp;&nbsp;&nbsp;{acctName}");
+        //    else
+        //        msg += HtmlUtils.BuildTableCell(acctName);
+
+        //    double periodRtn;
+
+        //    // YTD
+        //    periodRtn = acct.ReturnsPctYTD;
+        //    msg += HtmlUtils.BuildNumberCell(periodRtn.FormatPercentage());
+
+        //    // MTD
+        //    periodRtn = acct.ReturnsPctMTD;
+        //    msg += HtmlUtils.BuildNumberCell(periodRtn.FormatPercentage());
+
+        //    // 1 Year
+        //    periodRtn = acct.ReturnsPct1Year;
+        //    msg += HtmlUtils.BuildNumberCell(periodRtn.FormatPercentage());
+
+        //    // 6 Months
+        //    periodRtn = acct.ReturnsPct6Month;
+        //    msg += HtmlUtils.BuildNumberCell(periodRtn.FormatPercentage());
+
+        //    // 3 Months
+        //    periodRtn = acct.ReturnsPct3Month;
+        //    msg += HtmlUtils.BuildNumberCell(periodRtn.FormatPercentage());
+
+        //    // 1 Month
+        //    periodRtn = acct.ReturnsPct1Month;
+        //    msg += HtmlUtils.BuildNumberCell(periodRtn.FormatPercentage());
+
+        //    msg += "</tr>";
+        //    return msg;
+        //}
 
 
         private String BuildPeriodReturnTableRow(string groupName)
@@ -220,6 +224,10 @@ namespace PortfolioReporter.Reporter
             // 1 Month
             periodRtn = _portfolio.ReturnsPct1Month(groupName);
             msg += HtmlUtils.BuildNumberCell(periodRtn.FormatPercentage());
+
+            // AAR
+            var aar = _portfolio.GetAARForGroup(groupName);
+            msg += HtmlUtils.BuildNumberCell(aar.FormatPercentage());
 
             msg += "</tr>";
             return msg;
@@ -256,6 +264,10 @@ namespace PortfolioReporter.Reporter
             periodRtn = _portfolio.ReturnsPct1Month(groupName, subGroupName);
             msg += HtmlUtils.BuildNumberCell(periodRtn.FormatPercentage());
 
+            // AAR
+            var aar = _portfolio.GetAARForGroupSubGroup(groupName, subGroupName);
+            msg += HtmlUtils.BuildNumberCell(aar.FormatPercentage());
+
             msg += "</tr>";
             return msg;
         }
@@ -285,6 +297,7 @@ namespace PortfolioReporter.Reporter
             msg += HtmlUtils.BuildTableHeader("6 Months");
             msg += HtmlUtils.BuildTableHeader("3 Months");
             msg += HtmlUtils.BuildTableHeader("1 Month");
+            msg += HtmlUtils.BuildTableHeader("Avg Annual Rtn");
             msg += "</tr>";
 
             return msg;

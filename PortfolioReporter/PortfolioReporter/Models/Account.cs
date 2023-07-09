@@ -79,8 +79,7 @@ namespace PortfolioReporter.Models
 
         }
 
-
-        public int GetNearestPeriodBalanceIndex(DateTime targetDate)
+        private int GetNearestPeriodBalanceIndex(DateTime targetDate)
         {
             if (PeriodBalances.Count == 0)
             {
