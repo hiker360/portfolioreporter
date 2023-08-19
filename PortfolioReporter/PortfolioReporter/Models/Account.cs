@@ -86,6 +86,10 @@ namespace PortfolioReporter.Models
                 throw new ArgumentException("List of dates must not be null or empty");
             }
 
+            // If there is only a single balance, return it.
+            if (PeriodBalances.Count == 1)
+                return 0;
+
             // Loop through the list of dates and find the index of the first date that is not after the target date
             for (int i = 0; i < PeriodBalances.Count; i++)
             {
