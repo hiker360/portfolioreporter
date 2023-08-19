@@ -48,7 +48,7 @@ namespace PortfolioReporter.Importer
                 if (!portfolio.HasAccount(accountName))
                     continue;
 
-
+                Console.WriteLine($"Importing {accountName}");
                 ImporterSql.UpdateAccountBalance(accountName, periodEnding, marketValue);
 
             }
