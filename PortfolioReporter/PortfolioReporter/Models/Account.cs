@@ -62,6 +62,12 @@ namespace PortfolioReporter.Models
                 return 0;
 
             var idx = GetNearestPeriodBalanceIndex(fromDateTime);
+            if (idx<0)
+            {
+                Console.WriteLine($"Unable to determine cost bases for {Name}");
+                return 0;
+            }
+
             var startPerBal = PeriodBalances[idx];
 
             var totInvestment = 0m;
@@ -95,7 +101,10 @@ namespace PortfolioReporter.Models
             {
                 if (PeriodBalances[i].PeriodEndingDate > targetDate)
                 {
-                    return i-1;
+                    if (i == 0)
+                        return 0;
+                    else
+                        return i - 1;
                 }
             }
 
