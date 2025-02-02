@@ -1,0 +1,132 @@
+﻿@model PortfolioGraphViewModel
+
+@{
+    ViewData["Title"] = "Portfolio Graph";
+
+    // Extract distinct groups from AccountGroups dictionary
+    var groups = Model.AccountGroups.Values.Distinct().ToList();
+
+    // Build the full dropdown list: Portfolio (group), then Groups (group), then Accounts
+    var allOptions = new List<string> { "Portfolio" };
+    allOptions.AddRange(groups.Select(g => g + " (group)"));
+    allOptions.AddRange(Model.PortfolioReturns.Keys);
+
+    // Default selections
+    var defaultPrimary = "Portfolio";
+    var defaultBenchmark = Model.PortfolioReturns.Keys.FirstOrDefault(k => k.Contains("Benchmark")) ?? Model.PortfolioReturns.Keys.First();
+}
+
+<h2>Portfolio Returns Comparison</h2>
+
+<label for="primarySelect">Select Primary:</label>
+<select id="primarySelect">
+    @foreach (var option in allOptions)
+    {
+        <option value="@option" selected="@(option == defaultPrimary ? "selected" : null)">@option</option>
+    }
+</select>
+
+<label for="benchmarkSelect">Select Comparison:</label>
+<select id="benchmarkSelect">
+    @foreach (var option in allOptions)
+    {
+        <option value="@option" selected="@(option == defaultBenchmark ? "selected" : null)">@option</option>
+    }
+</select>
+
+<div style="width: 750px; height: 500px;">
+    <canvas id="returnsChart"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    var chartData = @Html.Raw(Json.Serialize(Model.PortfolioReturns));
+    var accountGroups = @Html.Raw(Json.Serialize(Model.AccountGroups));
+
+    var ctx = document.getElementById('returnsChart').getContext('2d');
+    var labels = ['1M', '3M', '6M', 'YTD', '1Y'];
+
+    var primarySelection = "@defaultPrimary";
+    var benchmarkSelection = "@defaultBenchmark";
+
+    function isGroup(selection) {
+        return selection.endsWith("(group)");
+    }
+
+    function getChartData(selection) {
+        if (selection === "Portfolio") {
+            let portfolioAccounts = Object.keys(chartData);
+            return aggregateReturns(portfolioAccounts);
+        }
+
+        if (isGroup(selection)) {
+            let groupName = selection.replace(" (group)", "");
+            let groupAccounts = Object.keys(accountGroups).filter(acc => accountGroups[acc] === groupName);
+            return aggregateReturns(groupAccounts);
+        }
+
+        return chartData[selection] ? labels.map(period => chartData[selection][period]) : [0, 0, 0, 0, 0];
+    }
+
+    function aggregateReturns(accounts) {
+        if (accounts.length === 0) return [0, 0, 0, 0, 0];
+
+        let weightedReturns = [0, 0, 0, 0, 0];
+        let totalBalance = accounts.reduce((sum, acc) => sum + (chartData[acc]["Balance"] || 0), 0);
+
+        if (totalBalance === 0) return [0, 0, 0, 0, 0];
+
+        labels.forEach((period, index) => {
+            weightedReturns[index] = accounts.reduce((sum, acc) =>
+                sum + (chartData[acc][period] * (chartData[acc]["Balance"] || 0)), 0) / totalBalance;
+        });
+
+        return weightedReturns;
+    }
+
+    var chartConfig = {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: primarySelection,
+                    data: getChartData(primarySelection),
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)'
+                },
+                {
+                    label: benchmarkSelection,
+                    data: getChartData(benchmarkSelection),
+                    backgroundColor: 'rgba(255, 99, 132, 0.6)'
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    };
+
+    var returnsChart = new Chart(ctx, chartConfig);
+
+    function updateChart() {
+        primarySelection = document.getElementById('primarySelect').value;
+        benchmarkSelection = document.getElementById('benchmarkSelect').value;
+
+        returnsChart.data.datasets[0].label = primarySelection;
+        returnsChart.data.datasets[0].data = getChartData(primarySelection);
+
+        returnsChart.data.datasets[1].label = benchmarkSelection;
+        returnsChart.data.datasets[1].data = getChartData(benchmarkSelection);
+
+        returnsChart.update();
+    }
+
+    document.getElementById('primarySelect').addEventListener('change', updateChart);
+    document.getElementById('benchmarkSelect').addEventListener('change', updateChart);
+</script>

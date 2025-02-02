@@ -1,0 +1,151 @@
+﻿@model PortfolioGraphViewModel
+
+@{
+    ViewData["Title"] = "Portfolio Table";
+
+    // Extract distinct groups from AccountGroups dictionary
+    var groups = Model.AccountGroups.Values.Distinct().ToList();
+
+    // Compute total balance for each group
+    var groupSums = Model.PortfolioReturns
+        .Where(x => Model.AccountGroups.ContainsKey(x.Key))
+        .GroupBy(x => Model.AccountGroups[x.Key])
+        .ToDictionary(g => g.Key, g => g.Sum(x => x.Value["Balance"]));
+
+    // Compute overall portfolio total balance
+    var portfolioTotal = Model.PortfolioReturns.Sum(x => x.Value["Balance"]);
+}
+
+<h2>Portfolio Returns Table</h2>
+
+<table class="portfolio-table">
+    <thead>
+        <tr>
+            <th>Account</th>
+            <th>% of Group</th>
+            <th>% of Portfolio</th>
+            <th>Balance</th>
+            <th>1M</th>
+            <th>3M</th>
+            <th>6M</th>
+            <th>YTD</th>
+            <th>1Y</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="portfolio-row">
+            <td><strong>Portfolio Total</strong></td>
+            <td>--</td>
+            <td>100%</td>
+            <td>@portfolioTotal.ToString("C")</td>
+            <td>@(portfolioTotal > 0 ? Model.PortfolioReturns.Sum(x => x.Value["1M"] * x.Value["Balance"]) / portfolioTotal : 0).ToString("P2")</td>
+            <td>@(portfolioTotal > 0 ? Model.PortfolioReturns.Sum(x => x.Value["3M"] * x.Value["Balance"]) / portfolioTotal : 0).ToString("P2")</td>
+            <td>@(portfolioTotal > 0 ? Model.PortfolioReturns.Sum(x => x.Value["6M"] * x.Value["Balance"]) / portfolioTotal : 0).ToString("P2")</td>
+            <td>@(portfolioTotal > 0 ? Model.PortfolioReturns.Sum(x => x.Value["YTD"] * x.Value["Balance"]) / portfolioTotal : 0).ToString("P2")</td>
+            <td>@(portfolioTotal > 0 ? Model.PortfolioReturns.Sum(x => x.Value["1Y"] * x.Value["Balance"]) / portfolioTotal : 0).ToString("P2")</td>
+        </tr>
+
+        @foreach (var group in groupSums.Keys)
+        {
+            var groupBalance = groupSums[group];
+            var percentageOfPortfolio = portfolioTotal > 0 ? (groupBalance / portfolioTotal) * 100 : 0;
+
+            <tr class="group-row">
+                <td><strong>@group</strong></td>
+                <td>--</td>
+                <td>@percentageOfPortfolio.ToString("0.##")%</td>
+                <td>@groupBalance.ToString("C")</td>
+                <td>--</td>
+                <td>--</td>
+                <td>--</td>
+                <td>--</td>
+                <td>--</td>
+            </tr>
+
+            foreach (var account in Model.PortfolioReturns.Where(x => Model.AccountGroups[x.Key] == group))
+            {
+                var accountBalance = account.Value["Balance"];
+                var percentageOfGroup = groupBalance > 0 ? (accountBalance / groupBalance) * 100 : 0;
+                var percentageOfPortfolioAcc = portfolioTotal > 0 ? (accountBalance / portfolioTotal) * 100 : 0;
+
+                <tr class="account-row">
+                    <td style="padding-left: 30px;">@account.Key</td>
+                    <td>@percentageOfGroup.ToString("0.##")%</td>
+                    <td>@percentageOfPortfolioAcc.ToString("0.##")%</td>
+                    <td>@accountBalance.ToString("C")</td>
+                    <td>@account.Value["1M"].ToString("P2")</td>
+                    <td>@account.Value["3M"].ToString("P2")</td>
+                    <td>@account.Value["6M"].ToString("P2")</td>
+                    <td>@account.Value["YTD"].ToString("P2")</td>
+                    <td>@account.Value["1Y"].ToString("P2")</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+<h2>Benchmark Accounts</h2>
+<table class="portfolio-table">
+    <thead>
+        <tr>
+            <th>Account</th>
+            <th>Balance</th>
+            <th>1M</th>
+            <th>3M</th>
+            <th>6M</th>
+            <th>YTD</th>
+            <th>1Y</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var benchmark in Model.PortfolioReturns.Where(x => x.Key.Contains("Benchmark")))
+        {
+            <tr class="benchmark-row">
+                <td>@benchmark.Key</td>
+                <td>@benchmark.Value["Balance"].ToString("C")</td>
+                <td>@benchmark.Value["1M"].ToString("P2")</td>
+                <td>@benchmark.Value["3M"].ToString("P2")</td>
+                <td>@benchmark.Value["6M"].ToString("P2")</td>
+                <td>@benchmark.Value["YTD"].ToString("P2")</td>
+                <td>@benchmark.Value["1Y"].ToString("P2")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+<!-- Table Styling -->
+<style>
+    .portfolio-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-family: Arial, sans-serif;
+    }
+
+        .portfolio-table th, .portfolio-table td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+
+    .portfolio-row {
+        background-color: #f2f2f2;
+        font-weight: bold;
+    }
+
+    .group-row {
+        background-color: #e6f7ff;
+        font-weight: bold;
+    }
+
+    .account-row {
+        background-color: #ffffff;
+    }
+
+    .benchmark-row {
+        background-color: #fff7e6;
+        font-style: italic;
+    }
+
+    .account-row td {
+        padding-left: 30px;
+    }
+</style>

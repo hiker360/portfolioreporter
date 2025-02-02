@@ -1,0 +1,16 @@
+﻿@{
+    ViewData["Title"] = "Error";
+}
+
+<h2>An Error Occurred</h2>
+
+<p>We're sorry, but something went wrong.</p>
+
+@if (ViewData["ErrorMessage"] != null)
+{
+    <p><strong>Error Details:</strong> @ViewData["ErrorMessage"]</p>
+}
+
+<p>
+    <a href="/">Return to Home Page</a>
+</p>
